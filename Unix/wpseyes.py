@@ -30,10 +30,19 @@ def handler_STP(signum, frame):
 	pass
 
 def handler_INT(signum, frame):
+	os.system('sudo ip link set %s down' % WpsEyes.interface)
+	os.system('sudo iw %s set type managed' % WpsEyes.interface)
+	os.system('sudo ip link set %s up' % WpsEyes.interface)
+	os.system('sudo systemctl restart NetworkManager')
 	print(bcolors.HEADER + 'Bye-bye! . . .\n')
 	exit(1)
 
 def toMonitor(interface):
+	result = sp.Popen(['sudo', 'iw',interface,'info'], stdout=sp.PIPE,bufsize=1)
+	for line in iter(result.stdout.readline, b''):
+		stroka = line.decode('utf-8')
+		if 'type monitor' in stroka.strip():
+			return False
 	if WpsEyes.verbose: print(bcolors.WARNING + 'Stopping the NetworkManager . . .')
 	os.system('sudo airmon-ng check kill > /dev/null')
 	if WpsEyes.verbose: print(bcolors.WARNING + 'Changing the interface mode . . .')
@@ -144,6 +153,8 @@ class WpsEyes(cmd.Cmd):
 			WpsEyes.interface = line
 			if toMonitor(WpsEyes.interface):
 				print(bcolors.OKGREEN + "Wireless interface: %s - in monitor mode and currently set by default\n" % WpsEyes.interface)
+			else:
+				print(bcolors.OKGREEN + "Wireless interface: %s - already ready\n" % WpsEyes.interface)
 
 	def do_wash(self, arg):
 		"\033[94m[?] Show nearby Wi-Fi hotspots with WPS\nExample: 'wash <10>' (timeout in seconds)\n"

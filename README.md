@@ -16,6 +16,7 @@ Tested on:
 Requirements:
 - Python 3.6 or above
 - Reaver & Wash
+- Airmon-ng
 
 Tested on:
 - Kali 2018
