@@ -29,11 +29,15 @@ class bcolors:
 def handler_STP(signum, frame):
 	pass
 
+def restore(interface):
+	if len(interface) > 3:
+		os.system('sudo ip link set %s down' % interface)
+		os.system('sudo iw %s set type managed' % interface)
+		os.system('sudo ip link set %s up' % interface)
+		os.system('sudo systemctl restart NetworkManager')
+
 def handler_INT(signum, frame):
-	os.system('sudo ip link set %s down' % WpsEyes.interface)
-	os.system('sudo iw %s set type managed' % WpsEyes.interface)
-	os.system('sudo ip link set %s up' % WpsEyes.interface)
-	os.system('sudo systemctl restart NetworkManager')
+	restore(WpsEyes.interface)
 	print(bcolors.HEADER + 'Bye-bye! . . .\n')
 	exit(1)
 
@@ -95,6 +99,7 @@ class WpsEyes(cmd.Cmd):
 
 	def do_EOF(self,_):
 		"\033[94m[?] Exit from WpsEyes\n"
+		restore(WpsEyes.interface)
 		print(bcolors.HEADER + 'Bye-bye! . . .\n')
 		return True
 
