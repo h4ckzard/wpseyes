@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import os
 import cmd
@@ -194,13 +194,13 @@ class WpsEyes(cmd.Cmd):
 		connections = '2'
 		max_attempts = 5
 		
+		if len(line) < 1:
+			print(bcolors.FAIL + "[!] Argument with BSSID can not be empty\nExample: 'crack <BSSID>'\n")
+			return
 		arg = line.split()
 		line = arg[0]
 		if len(WpsEyes.interface) < 1:
 			print(bcolors.FAIL + "[!] Please select an wireless interface to use\nExample: 'interface <wlan0>'\n")
-			return
-		if len(line) < 1:
-			print(bcolors.FAIL + "[!] Argument with BSSID can not be empty\nExample: 'crack <BSSID>'\n")
 			return
 		if not isMAC48Address(line):
 			print(bcolors.FAIL + "[!] Please check the BSSID in argument of this command\nExample: 'crack <BSSID>'\n")
